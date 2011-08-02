@@ -1,15 +1,15 @@
-a(href='/newproject') New entry
+a(href='newproject') New entry
 - each project in projects 
 	h2= project.title 
 	pre= project.description
 	span= 'votes: ' + ( project.votes || 0 )
 	span &nbsp; | 
-	a(href='http://localhost:3000/editproject/' +  project.id) edit
+	a(href='editproject/' +  project.id) edit
 	span &nbsp; | 
-	a(href='http://localhost:3000/confirmdelete/' +  project.id) delete 
+	a(href='confirmdelete/' +  project.id) delete 
 	span &nbsp; | 
-	a(href='http://localhost:3000/upvote/' +  project.id) upvote 
+	a(href='upvote/' +  project.id) upvote 
 	span &nbsp; | 
-	a(href='http://localhost:3000/downvote/' +  project.id) downvote 
+	a(href='downvote/' +  project.id) downvote 
 	hr
 
