@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www
+
+	ProxyPass /workingon/ http://tritonelabs.com:3000/
+	ProxyPassReverse /workingon/ http://tritonelabs.com:3000/
+	<Proxy *>
+		Order deny,allow
+		Allow from all
+	</Proxy>
+
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+</VirtualHost>
