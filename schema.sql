@@ -8,6 +8,12 @@ create table project (
 	-- foreign key (fk_userid) references user(id)
 );
 
+create table user (
+	id integer not null auto_increment primary key, 
+	username varchar(25), 
+	password varchar(25) 
+);
+
 -- create table tag (
 --	id integer not null auto_increment primary key,
 --	name varchar(1000) not null,
