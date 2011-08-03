@@ -5,7 +5,48 @@ var getClient = require('./getclient.js').getClient;
 
 var app = express.createServer();
 app.use(express.bodyParser());
+
+app.use(express.cookieParser());
+app.use(express.session({ secret: "pearl cat" }));
+
 app.use(express.static( __dirname + '/static' ));
+
+
+/**
+* Login 
+*/
+app.get('/login', function(req, res){
+	console.log( 'running login controller');
+	var client = getClient();
+	
+	res.render('login.jade', {info: req.flash('info')} );
+//	res.render('login.jade');
+});
+app.post('/login', function(req, res){
+	console.log( req.body );
+	var client = getClient();
+	client.query(
+		'select count(*) as rows from user where username = ? and password = ?', 
+		[req.body.username, req.body.password], 
+		function( err, results ) { 
+			if( results[0].rows > 0 ) {
+				client.end();
+				req.session.authenticated = true;	
+				req.flash('info','logged in');
+				res.redirect('/projects');
+			}
+			else {
+				client.end();
+				req.flash('info','login failed');
+				res.redirect('/login');
+			}	
+		}
+	);
+});
+app.get('/logout', function(req, res){
+	req.session.authenticated = false;	
+	res.redirect('/login');
+});
 
 /**
 * Main projects page
@@ -14,14 +55,22 @@ app.get('/', function(req, res){
     res.redirect('/projects');
 });
 app.get('/projects', function(req, res){
-	var client = getClient();
-	client.query(
-		'select * from project order by votes desc', 
-		function( err, results ) { 
-			console.log( results );
-			client.end();
-			res.render('projects.jade', { projects: results });
-	});
+	if( req.session.authenticated == false || req.session.authenticated == undefined ) {
+		console.log( 'not authenticated - redirecting' );
+		res.redirect('/login');
+	}
+	// note that else is necessary since res.redirect() is not blocking.
+	else {
+		console.log( 'authenticated: ' + req.session.authenticated );
+		var client = getClient();
+		client.query(
+			'select * from project order by votes desc', 
+			function( err, results ) { 
+				console.log( results );
+				client.end();
+				res.render('projects.jade', { projects: results });
+		});
+	}
 });
 
 
