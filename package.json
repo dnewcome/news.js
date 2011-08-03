@@ -2,7 +2,7 @@
   "name": "workingon",
   "version": "0.0.1",
   "description": "App to pick what to work on.",
-  "keywords": ["app", "web",],
+  "keywords": ["app", "web"],
   "repository": "git@dnewcome.unfuddle.com:dnewcome/workingon.git",
   "author": "Dan Newcome <dnewcome@elevenprime.com> (http://newcome.wordpress.com)",
   "dependencies": {
