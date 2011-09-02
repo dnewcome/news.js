@@ -2,7 +2,10 @@ table
 	- var i = 0;
 	- each project in projects 
 		tr
-			td(class='col1')= ++i + '.'
+			- if( project.fk_created_by == userid )
+				td(class='col1',style='color:#ff6600')= '*'
+			- else
+				td(class='col1')= ++i + '.'
 			td
 				a(href='upvote/'+project.id)
 					img(src='grayarrow.gif')

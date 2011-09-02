@@ -1,3 +1,5 @@
+var model = require('./model');
+
 var express = require('express');
 var http = require('http');
 var getClient = require('./getclient.js').getClient;
@@ -26,13 +28,15 @@ app.post('/login', function(req, res){
 	console.log( req.body );
 	var client = getClient();
 	client.query(
-		'select count(*) as rows from user where username = ? and password = ?', 
+		'select id from user where username = ? and password = ?', 
 		[req.body.username, req.body.password], 
 		function( err, results ) { 
-			if( results[0].rows > 0 ) {
+			if( results.length > 0 ) {
 				client.end();
 				req.session.authenticated = true;	
 				req.session.username = req.body.username;	
+				req.session.userid = results[0].id;	
+				console.log( results );
 				req.flash('info','logged in');
 				res.redirect('/projects');
 			}
@@ -47,6 +51,7 @@ app.post('/login', function(req, res){
 app.get('/logout', function(req, res){
 	req.session.authenticated = false;	
 	req.session.username = '';	
+	req.session.userid = '';	
 	res.redirect('/login');
 });
 
@@ -70,7 +75,11 @@ app.get('/projects', function(req, res){
 			function( err, results ) { 
 				console.log( results );
 				client.end();
-				res.render('projects.jade', { projects: results, username: req.session.username });
+				res.render('projects.jade', { 
+					projects: results, 
+					username: req.session.username,
+					userid: req.session.userid
+				});
 		});
 	}
 });
@@ -87,8 +96,8 @@ app.post('/projects', function(req, res){
 	console.log( req.body );
 	var client = getClient();
 	client.query(
-		'insert into project set title = ?, description = ?, votes = 0', 
-		[req.body.title, req.body.description], 
+		'insert into project set title = ?, description = ?, votes = 0, fk_created_by = ?', 
+		[req.body.title, req.body.description, req.session.userid], 
 		function( err, results ) { 
 			client.end();
 			// using flash requires session support
