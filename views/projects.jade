@@ -1,17 +1,15 @@
-a(href='newproject') New entry
-span &nbsp; | 
-a(href='logout') Log out 
-- each project in projects 
-	h2= project.title 
-	pre= project.description
-	span= 'votes: ' + ( project.votes || 0 )
-	span &nbsp; | 
-	a(href='editproject/' +  project.id) edit
-	span &nbsp; | 
-	a(href='confirmdelete/' +  project.id) delete 
-	span &nbsp; | 
-	a(href='upvote/' +  project.id) upvote 
-	span &nbsp; | 
-	a(href='downvote/' +  project.id) downvote 
-	hr
+table
+	- var i = 0;
+	- each project in projects 
+		tr
+			td(class='col1')= ++i + '.'
+			td
+				a(href='')
+					img(src='grayarrow.gif')
+			td= project.title 
+		tr
+			td
+			td
+			td
+				span= ( project.votes || 0 ) + ' points'
 
