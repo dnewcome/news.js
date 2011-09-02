@@ -4,12 +4,12 @@ table
 		tr
 			td(class='col1')= ++i + '.'
 			td
-				a(href='')
+				a(href='upvote/'+project.id)
 					img(src='grayarrow.gif')
 			td= project.title 
 		tr
 			td
 			td
 			td
-				span= ( project.votes || 0 ) + ' points'
+				span(style='font-size:7pt')= ( project.votes || 0 ) + ' points'
 

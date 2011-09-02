@@ -32,6 +32,7 @@ app.post('/login', function(req, res){
 			if( results[0].rows > 0 ) {
 				client.end();
 				req.session.authenticated = true;	
+				req.session.username = req.body.username;	
 				req.flash('info','logged in');
 				res.redirect('/projects');
 			}
@@ -45,6 +46,7 @@ app.post('/login', function(req, res){
 });
 app.get('/logout', function(req, res){
 	req.session.authenticated = false;	
+	req.session.username = '';	
 	res.redirect('/login');
 });
 
@@ -68,7 +70,7 @@ app.get('/projects', function(req, res){
 			function( err, results ) { 
 				console.log( results );
 				client.end();
-				res.render('projects.jade', { projects: results });
+				res.render('projects.jade', { projects: results, username: req.session.username });
 		});
 	}
 });

@@ -2,15 +2,22 @@
 html( lang="en")
 	head
 		style
+			body { font-family: verdana; font-size: 10pt }
 			.wrap { margin: auto; width: 800px }	
-			.col1 { width: 1px; background-image: url('http://www.killersites.com/killerSites/resources/dot_clear.gif'); }
-			td { text-align: left }
+			.col1 { 
+				width: 1px; 
+				color: #828282;
+			}
+			td { text-align: left; margin:0px }
 	body
 		center
-			table( bgcolor='#f6f6ef', width='85%')
-				tr
-					td( bgcolor='#ff6600', width='100%' )
+			table( bgcolor='#f6f6ef', width='85%', cellspacing='0px')
+				tr( bgcolor='#ff6600' )
+					td( width='10px')
+						img(src='s18.gif',style='border: 1px solid white')
+					td( width='50%' )
 						b( style="font-family:'verdana'; font-weight:'700'; font-size:'10pt'") Slacker News
+					td(style='text-align:right')= (typeof username != 'undefined' ? username : 'login') + ' | logout'
 				tr
-					td!= body
+					td(colspan='100')!= body
 						// div.wrap!= body
