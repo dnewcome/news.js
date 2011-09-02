@@ -1,0 +1,103 @@
+var getClient = require('./getclient.js').getClient;
+
+exports.login = function( username, password, success, failure ) {
+	var client = getClient();
+	var sql = 'select id from user where username = ? and password = ?';
+	client.query( sql, [ username, password ], 
+		function( err, results ) { 
+			if( results.length > 0 ) {
+				client.end();
+				console.log( results );
+				success({ 
+					userid: results[0].id 
+				});
+			}
+			else {
+				client.end();
+				failure();
+			}	
+		}
+	);
+};
+
+exports.getProjects = function( userid, success, failure ) {
+	var client = getClient();
+	// var sql = 'select * from project order by votes desc'; 
+	var sql = 
+		'select * from project ' +
+		'left outer join ( ' + 
+			'select * from vote where fk_user_id = ? ' +
+		') f on f.fk_project_id = project.id order by votes desc';
+
+	var sql = 
+		'select project.id, project.title, project.description, project.votes, ' +
+			'f.fk_user_id as voted, fk_created_by, user.username ' +
+		'from project ' + 
+		'left outer join ( ' + 
+			'select * from vote where fk_user_id = ? ' +
+		') f on f.fk_project_id = project.id ' + 
+		'left join user on user.id = fk_created_by ' +
+		'order by votes desc';
+
+
+	client.query( sql, [userid],
+		function( err, results ) { 
+			client.end();
+			success( results );
+		}
+	);
+}
+
+exports.newProject = function( title, desc, userid, success, failure ) {
+	var client = getClient();
+	var sql = 'insert into project ' + 
+		'set title = ?, description = ?, votes = 1, fk_created_by = ?';
+	client.query( sql, [ title, desc, userid ], 
+		function( err, results ) { 
+			client.end();
+			success();	
+	});
+};
+
+exports.upvote = function( id, userid, success, failure ) {
+	vote( id, userid, "+1", function() { success(); }  );
+};
+
+exports.downvote = function( id, userid, success, failure ) {
+	vote( id, userid, "-1", function() { success(); }  );
+}
+
+/**
+ * Helper function for voting
+ */
+function vote( id, userid, dir, cb ) {
+	console.log('callback cb() is ' + cb);
+	var client = getClient();
+	var sql = 
+		'update project set votes = votes ' + dir + ' where id = ?'; 
+	sql += 
+		' and not exists ( ' + 
+			'select * from vote where fk_project_id = ? and fk_user_id = ? ' +
+		')';
+	client.query(
+		sql, [id,id,userid], 
+		function( err, results ) { 
+			console.log(results);
+			// only insert vote row if we updated earlier
+			if( results.affectedRows != 0 ) {
+				client.query(
+					'insert into vote ( fk_user_id, fk_project_id ) values (?,?) ',
+					[userid,id], 
+					function( err, results ) { 
+						client.end();
+						cb(); 
+					}
+				);
+			}
+			else {
+				cb(); 
+			}
+		}
+	);
+}
+

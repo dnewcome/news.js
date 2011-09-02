@@ -4,15 +4,21 @@ table
 		tr
 			- if( project.fk_created_by == userid )
 				td(class='col1',style='color:#ff6600')= '*'
+				td
 			- else
 				td(class='col1')= ++i + '.'
+				-if( project.voted != null )
+					td(width='10px')
+				-else
+					td
+						a(href='upvote/'+project.id)
+							img(src='grayarrow.gif')
 			td
-				a(href='upvote/'+project.id)
-					img(src='grayarrow.gif')
-			td= project.title 
+				a(href='#{project.description}') #{project.title}
 		tr
 			td
 			td
-			td
+			td( class='col1',style='line-height:8px' )
 				span(style='font-size:7pt')= ( project.votes || 0 ) + ' points'
+				span(style='font-size:7pt') &nbsp;by #{project.username}
 
