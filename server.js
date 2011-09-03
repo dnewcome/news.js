@@ -40,11 +40,29 @@ app.post('/login', function(req, res){
 		}
 	);
 });
-
+app.post('/signup', function(req, res){
+	model.signup( 
+		req.body.newusername, 
+		req.body.newpassword,
+		function( data ) {
+			req.session.authenticated = true;	
+			req.session.username = req.body.newusername;	
+			req.session.userid = data.userid;	
+			console.log( req.session.userid );
+			req.flash('info','logged in');
+			res.redirect('/projects');
+		},
+		function() {
+			req.flash('info','signup failed - duplicate name');
+			res.redirect('/login');
+		}
+	);
+});
 app.get( '/logout', function( req, res ) {
 	req.session.authenticated = false;	
 	req.session.username = '';	
 	req.session.userid = null;	
+	req.flash('info','logged out');
 	res.redirect('/login');
 });
 
@@ -79,20 +97,58 @@ app.get( '/projects', function( req, res ) {
 	}
 });
 
+app.post( '/comments/:id', function( req, res ) {
+	if( loggedin( req ) ) {
+		console.log( req.body );
+		model.newComment( 
+			req.body.comment, 
+			req.session.userid,
+			req.params.id,
+			function() {
+				res.render( 'posted.jade', { action: 'edit' } );
+			}
+		);
+	}
+});
+app.get( '/comments/:id', function( req, res ) {
+	if( anonaccess == false ) {
+		if( req.session.authenticated == false 
+		|| req.session.authenticated == undefined ) {
+			console.log( 'not authenticated - redirecting' );
+			res.redirect( '/login' );
+		}
+	}
+	// note that else is necessary since res.redirect() is not blocking.
+	else {
+		model.getComments( req.session.userid, req.params.id,
+			function( data ) {
+				res.render('comments.jade', { 
+					comments: data, 
+					username: req.session.username,
+					userid: req.session.userid,
+					postid: req.params.id
+				});
+			},
+			function() {
+				req.flash('info','error showing items');
+			}
+		);
+	}
+});
 
 /**
 * New project
 */
 app.get('/newproject', function(req, res){
-	if( loggedin() ) {
+	if( loggedin( req ) ) {
 		res.render('newproject.jade');
 	}
 	else {
-		res.redirect('login.jade');
+		res.redirect('/login');
 	}
 });
 app.post('/projects', function(req, res){
-	if( loggedin() ) {
+	if( loggedin( req ) ) {
 		console.log( req.body );
 		model.newProject( 
 			req.body.title, 

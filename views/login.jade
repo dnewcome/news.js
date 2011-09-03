@@ -2,8 +2,20 @@ style
 	label { display:block; }
 form(method='post', action='login')
 	div= info 
+	h2 Log in: 
 	label(for='username') Username:
 	input(type='text', name='username', size='25')
 	label(for='password') Password:
 	input(type='text', name='password', size='25')
-	input(type='submit')
+	br
+	input(type='submit',value='Log In') 
+
+h3 Or,
+form(method='post', action='signup')
+	h2 Create account:
+	label(for='newusername') Username:
+	input(type='text', name='newusername', size='25')
+	label(for='newpassword') Password:
+	input(type='text', name='newpassword', size='25')
+	br
+	input(type='submit',value='Create Account') 

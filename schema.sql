@@ -4,7 +4,8 @@ create table project (
 	description longtext character set utf8,
 	votes integer,
 	create_dt datetime not null,
-	fk_created_by integer not null
+	fk_created_by integer not null,
+	fk_parent_id integer 
 	-- fk_userid integer not null, 
 	-- foreign key (fk_userid) references user(id)
 );
@@ -12,7 +13,8 @@ create table project (
 create table user (
 	id integer not null auto_increment primary key, 
 	username varchar(25), 
-	password varchar(25) 
+	password varchar(25),
+	unique( username )
 );
 
 create table vote (

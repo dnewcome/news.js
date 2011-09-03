@@ -19,12 +19,31 @@ exports.login = function( username, password, success, failure ) {
 		}
 	);
 };
+exports.signup = function( username, password, success, failure ) {
+	var client = getClient();
+	var sql = 'insert into user ( username, password ) values ( ?, ? )';
+	client.query( sql, [ username, password ], 
+		function( err, results ) { 
+			if( err == null && results.affectedRows > 0 ) {
+				client.end();
+				console.log( results );
+				success({ 
+					userid: results.insertId 
+				});
+			}
+			else {
+				client.end();
+				failure();
+			}	
+		}
+	);
+};
 
 exports.getProjects = function( userid, success, failure ) {
 	var client = getClient();
 	// var sql = 'select * from project order by votes desc'; 
 	var sql = 
-		'select * from project ' +
+		'select * from project where fk_parent_id is null ' +
 		'left outer join ( ' + 
 			'select * from vote where fk_user_id = ? ' +
 		') f on f.fk_project_id = project.id order by votes desc';
@@ -37,6 +56,9 @@ exports.getProjects = function( userid, success, failure ) {
 			'select * from vote where fk_user_id = ? ' +
 		') f on f.fk_project_id = project.id ' + 
 		'left join user on user.id = fk_created_by ' +
+		// trying to get comment counts
+		// 'left join (select count(*) as count, max(fk_parent_id) as fk_parent_id from project where fk_parent_id is not null group by fk_parent_id ) x on x.fk_parent_id = p.fk_parent_id' +
+		'where fk_parent_id is null ' +
 		'order by votes desc';
 
 
@@ -47,6 +69,28 @@ exports.getProjects = function( userid, success, failure ) {
 		}
 	);
 }
+
+exports.getComments = function( userid, postid, success, failure ) {
+	var client = getClient();
+	var sql = 'select * from project where fk_parent_id = ?';
+	client.query( sql, [postid],
+		function( err, results ) { 
+			client.end();
+			success( results );
+		}
+	);
+}
+
+exports.newComment = function( body, userid, postid, success, failure ) {
+	var client = getClient();
+	var sql = 'insert into project ' + 
+		'set description = ?, votes = 1, fk_created_by = ?, fk_parent_id = ?';
+	client.query( sql, [ body, userid, postid ], 
+		function( err, results ) { 
+			client.end();
+			success();	
+	});
+};
 
 exports.newProject = function( title, desc, userid, success, failure ) {
 	var client = getClient();
