@@ -120,7 +120,7 @@ app.get( '/comments/:id', function( req, res ) {
 	}
 	// note that else is necessary since res.redirect() is not blocking.
 	else {
-		model.getComments( req.session.userid, req.params.id,
+		model.getCommentsRecursive( req.params.id,
 			function( data ) {
 				res.render('comments.jade', { 
 					comments: data, 
