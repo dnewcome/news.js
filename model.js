@@ -81,16 +81,32 @@ exports.getComments = function( userid, postid, success, failure ) {
 	);
 }
 
-// need to pass the db connection in
-exports.getCommentsRecursive = function getCommentsRecursive( postid, success, failure ) {
+/**
+ * Wrapper function around recursive database get in order to 
+ * create and reuse the same db connection for the entire operation.
+ */
+exports.getCommentsRecursive = function( postid, success, failure ) {
 	var client = getClient();
-	commentsRecurse( client, postid, function( res ){ console.log('the real success');success( res ); }, failure );
+	commentsRecurse( client, postid, success, failure );
 }
+
+/**
+ * Internal function that does an async recursive get from the 
+ * database.
+ */
 function commentsRecurse( client, postid, success, failure ) {
+	// the response, which is built up over the course of 
+	// successive async callbacks as they return.
 	var res = [];
+
+	// keep track of how many callbacks have occurred 
+	// this is necessary in order to avoid returning prematurely
+	// when several async calls are in flight at the same level.
 	var count = 0;	
-	var sql = 'select * from project where fk_parent_id = ?';
-	console.log( sql + ' ' + postid  );
+
+	// make an async call to mysql as ususal, the magic happens in
+	// the callbacks.
+	var sql = 'select * from project where fk_parent_id = ? order by votes desc';
 	client.query( sql, [ postid ],
 		function( err, results ) { 
 			if( results.length == 0 ) {
@@ -99,11 +115,15 @@ function commentsRecurse( client, postid, success, failure ) {
 			}
 			for( var i=0; i < results.length; i++ ) {
 				// when recursing we give our own 'success' function.
+				// the first level of recursion has the 'final' success function,
+				// which is passed in externally. The rest use what is below.
 				commentsRecurse( client, results[i]['id'], function( lsuccess ) { 	
 					count++; 	
 					console.log('success returned ' + JSON.stringify( lsuccess ) );
 					res = res.concat( lsuccess );
 					console.log( 'joined ' + JSON.stringify( res ) );
+
+					// check that this is the last callback before returning success
 					if( count == results.length ) { 
 						success( res.concat( results ) ); 
 					} 
@@ -112,6 +132,7 @@ function commentsRecurse( client, postid, success, failure ) {
 		}
 	);
 }
+
 exports.newComment = function( body, userid, postid, success, failure ) {
 	var client = getClient();
 	var sql = 'insert into project ' + 
