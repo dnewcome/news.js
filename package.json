@@ -7,7 +7,7 @@
   "author": "Dan Newcome <dnewcome@elevenprime.com> (http://newcome.wordpress.com)",
   "dependencies": {
     "express": ">= 2.3.11",
-    "mysql": ">= 0.9.1",
+    "mysql": ">= 0.9.4",
     "jade": ">= 0.12.1"
   },
   "devDependencies": {},
