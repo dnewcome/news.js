@@ -93,6 +93,7 @@ exports.getCommentsRecursive = function( postid, success, failure ) {
 		// in this small wrapper function.
 		function( res ) { 
 			client.end(); 
+			console.log( 'final ' + JSON.stringify( res, null, 2 ) );
 			success( res ); 
 		}, failure 
 	);
@@ -127,18 +128,20 @@ function commentsRecurse( client, postid, success, failure ) {
 				success( res ); 
 			}
 			for( var i=0; i < results.length; i++ ) {
+				var resobj = { result: results[i], children: []}; 
+				res.push( resobj ); 
 				// when recursing we give our own 'success' function.
 				// the first level of recursion has the 'final' success function,
 				// which is passed in externally. The rest use what is below.
 				commentsRecurse( client, results[i]['id'], function( lsuccess ) { 	
 					count++; 	
 					// append level's child results as they are returned
-					res = res.concat( lsuccess );
+					resobj.children = resobj.children.concat( lsuccess );
 
 					// check that this is the last callback before returning success
 					if( count == results.length ) { 
-						// add the current level's results and return success
-						success( res.concat( results ) ); 
+						// return success
+						success( res ); 
 					} 
 				}, failure );	
 			}

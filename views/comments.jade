@@ -6,23 +6,23 @@ table
 	- var i = 0;
 	- each comment in comments 
 		tr
-			- if( comment.fk_created_by == userid )
+			- if( comment.result.fk_created_by == userid )
 				td(class='col1',style='color:#ff6600')= '*'
 				td
 			- else
 				td(class='col1')= ++i + '.'
-				-if( comment.voted != null )
+				-if( comment.result.voted != null )
 					td(width='10px')
 				-else
 					td
-						a(href='/upvote/'+comment.id)
+						a(href='/upvote/'+comment.result.id)
 							img(src='/grayarrow.gif')
 			td
-				p #{comment.description} 
+				p #{comment.result.description} 
 		tr
 			td
 			td
 			td( class='col1',style='line-height:8px' )
-				span(style='font-size:7pt')= ( comment.votes || 0 ) + ' points'
-				span(style='font-size:7pt') &nbsp;by #{comment.username}
+				span(style='font-size:7pt')= ( comment.result.votes || 0 ) + ' points'
+				span(style='font-size:7pt') &nbsp;by #{comment.result.username}
 
