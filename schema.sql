@@ -5,9 +5,8 @@ create table project (
 	votes integer,
 	create_dt datetime not null,
 	fk_created_by integer not null,
-	fk_parent_id integer 
-	-- fk_userid integer not null, 
-	-- foreign key (fk_userid) references user(id)
+	fk_parent_id integer,
+	foreign key (fk_created_by) references user(id)
 );
 
 create table user (
@@ -23,17 +22,3 @@ create table vote (
 	fk_project_id int not null
 );
 
--- create table tag (
---	id integer not null auto_increment primary key,
---	name varchar(1000) not null,
---	fk_postid integer not null,
---	foreign key (fk_postid) references post(id)
--- );
-
--- create table ref (
---	id integer not null auto_increment primary key,
---	fk_fromid integer not null,
---	fk_toid integer not null,
---	foreign key (fk_fromid) references atom(id),
---	foreign key (fk_toid) references atom(id)
--- );
