@@ -2,8 +2,8 @@
 	ServerAdmin webmaster@localhost
 	DocumentRoot /var/www
 
-	ProxyPass /workingon/ http://tritonelabs.com:3000/
-	ProxyPassReverse /workingon/ http://tritonelabs.com:3000/
+	ProxyPass /newsjs/ http://example.com:3000/
+	ProxyPassReverse /newsjs/ http://example.com:3000/
 	<Proxy *>
 		Order deny,allow
 		Allow from all
