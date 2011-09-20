@@ -84,19 +84,36 @@ exports.getComments = function( userid, postid, success, failure ) {
 /**
  * Wrapper function around recursive database get in order to 
  * create and reuse the same db connection for the entire operation.
+ * Also retrieves the root posting before recursing into children.
  */
 exports.getCommentsRecursive = function( postid, success, failure ) {
 	var client = getClient();
-	commentsRecurse( 
-		client, postid,
-		// handle calling 'end' on database connection here
-		// in this small wrapper function.
-		function( res ) { 
-			client.end(); 
-			console.log( 'final ' + JSON.stringify( res, null, 2 ) );
-			success( res ); 
-		}, failure 
-	);
+	var sql = 'select * from project where id = ?';
+	client.query( sql, [ postid ],
+		function( err, results ) { 
+		
+		commentsRecurse( 
+			client, postid,
+			// handle calling 'end' on database connection here
+			// in this small wrapper function.
+			function( res ) { 
+				var root = [];
+				root.push({
+					result: results[0],
+					children: res
+				});
+				// set a flag on the root node so the template
+				// knows to render the comment text area
+				root[0].result.root = true;
+				client.end(); 
+				console.log( 'final ' + JSON.stringify( root, null, 2 ) );
+				success( root ); 
+			}, failure 
+		);
+
+	});
+
+
 }
 
 /**

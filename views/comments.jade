@@ -1,7 +1,11 @@
-form(action='/comments/#{postid}',method='post')
-	textarea(name='comment')
-	br
-	input(type='submit',value='Comment')
+// TODO: checking for root flag is kind of hacky. Shoul
+// probably just split this recursive template up into a
+// head and recursive tail.
+- if( comments[0] && comments[0].result.root == true )
+	form(action='/comments/#{postid}',method='post')
+		textarea(name='comment', rows='6', cols='60')
+		br
+		input(type='submit',value='Comment')
 table
 	- var i = 0;
 	- each comment in comments 

@@ -8,7 +8,7 @@ var app = express.createServer();
 app.use(express.bodyParser());
 
 app.use(express.cookieParser());
-app.use(express.session({ secret: "pearl cat" }));
+app.use(express.session({ secret: "batman" }));
 
 app.use(express.static( __dirname + '/static' ));
 
