@@ -87,7 +87,15 @@ exports.getComments = function( userid, postid, success, failure ) {
  */
 exports.getCommentsRecursive = function( postid, success, failure ) {
 	var client = getClient();
-	commentsRecurse( client, postid, success, failure );
+	commentsRecurse( 
+		client, postid,
+		// handle calling 'end' on database connection here
+		// in this small wrapper function.
+		function( res ) { 
+			client.end(); 
+			success( res ); 
+		}, failure 
+	);
 }
 
 /**
@@ -109,6 +117,11 @@ function commentsRecurse( client, postid, success, failure ) {
 	var sql = 'select * from project where fk_parent_id = ? order by votes desc';
 	client.query( sql, [ postid ],
 		function( err, results ) { 
+
+			// we have to check for zero results here to avoid
+			// erroneously calling 'success' since the following iteration
+			// is fully asynchronous - putting this after the loop without
+			// a guard would not work.
 			if( results.length == 0 ) {
 				console.log( 'no results - returning' + JSON.stringify( res ) );
 				success( res ); 
@@ -119,12 +132,12 @@ function commentsRecurse( client, postid, success, failure ) {
 				// which is passed in externally. The rest use what is below.
 				commentsRecurse( client, results[i]['id'], function( lsuccess ) { 	
 					count++; 	
-					console.log('success returned ' + JSON.stringify( lsuccess ) );
+					// append level's child results as they are returned
 					res = res.concat( lsuccess );
-					console.log( 'joined ' + JSON.stringify( res ) );
 
 					// check that this is the last callback before returning success
 					if( count == results.length ) { 
+						// add the current level's results and return success
 						success( res.concat( results ) ); 
 					} 
 				}, failure );	
