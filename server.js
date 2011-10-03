@@ -67,6 +67,15 @@ app.get( '/logout', function( req, res ) {
 });
 
 /**
+ * We can use a route like this to look at all top 
+ * level routes to see if they require login.
+ */
+app.get( '/:foo', function( req, res, next ) {
+	console.log( 'route - ' + req.params.foo );
+	next();	
+});
+
+/**
 * Main projects page
 */
 app.get( '/', function( req, res ) {
@@ -97,6 +106,10 @@ app.get( '/projects', function( req, res ) {
 	}
 });
 
+app.post('/comments/:id', function(req, res, next ){
+	console.log('precondition route for posting comment');
+	loginCheck( req, res, next );
+});
 app.post( '/comments/:id', function( req, res ) {
 	if( loggedin( req ) ) {
 		console.log( req.body );
@@ -137,16 +150,30 @@ app.get( '/comments/:id', function( req, res ) {
 });
 
 /**
-* New project
-*/
-app.get('/newproject', function(req, res){
+ * Handles redirection to the login page for actions
+ * that require login.
+ */
+function loginCheck( req, res, next ) {
+	console.log( 'checking login' );
 	if( loggedin( req ) ) {
-		res.render('newproject.jade');
+		next();	
 	}
 	else {
 		res.redirect('/login');
 	}
+};
+
+/**
+* New project
+*/
+app.get('/newproject', function(req, res, next ){
+	console.log('precondition route for new project');
+	loginCheck( req, res, next );
 });
+app.get('/newproject', function(req, res){
+	res.render('newproject.jade');
+});
+
 app.post('/projects', function(req, res){
 	if( loggedin( req ) ) {
 		console.log( req.body );
