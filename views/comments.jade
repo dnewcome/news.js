@@ -9,16 +9,17 @@ table
 				td(class='col1',style='color:#ff6600')= '*'
 				td
 			- else
-				td(class='col1')= ++i + '.'
+				// td(class='col1', style='vertical-align:top')= ++i + '.'
+				td
 				-if( comment.result.voted != null )
 					td(width='10px')
 				-else
-					td
+					td(style='vertical-align:top')
 						a(href='/upvote/'+comment.result.id)
 							img(src='/grayarrow.gif')
 			td
 				a(href='/comments/'+comment.result.id)
-					p #{comment.result.description} 
+					p(style='margin-top:0px;margin-bottom:0px') #{comment.result.description} 
 		tr
 			td
 			td
@@ -33,9 +34,9 @@ table
 				td
 				td
 					form(action='/comments/#{postid}',method='post')
-						textarea(name='comment', rows='6', cols='60')
+						textarea(name='comment', rows='6', cols='60', style='margin-top:20px')
 						br
-						input(type='submit',value='Comment')
+						input(type='submit',value='Comment', style='margin-top:20px')
 		tr
 			td
 			td
