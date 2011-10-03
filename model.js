@@ -70,16 +70,18 @@ exports.getProjects = function( userid, success, failure ) {
 	);
 }
 
+/*
 exports.getComments = function( userid, postid, success, failure ) {
 	var client = getClient();
-	var sql = 'select * from project left join user on fk_created_by = user.id where fk_parent_id = ?';
-	client.query( sql, [postid],
+	var sql = 'select * from project left join user on fk_created_by = user.id where fk_parent_id = ? or project.id = ?';
+	client.query( sql, [postid, postid],
 		function( err, results ) { 
 			client.end();
 			success( results );
 		}
 	);
 }
+*/
 
 /**
  * Wrapper function around recursive database get in order to 
@@ -88,9 +90,9 @@ exports.getComments = function( userid, postid, success, failure ) {
  */
 exports.getCommentsRecursive = function( postid, success, failure ) {
 	var client = getClient();
-	var sql = 'select * from project left join user on fk_created_by = user.id where fk_parent_id = ?';
+	var sql = 'select project.*, user.username from project left join user on fk_created_by = user.id where project.id = ?';
 	// var sql = 'select * from project where id = ?';
-	client.query( sql, [ postid ],
+	client.query( sql, [ postid],
 		function( err, results ) { 
 		
 		commentsRecurse( 
@@ -135,8 +137,9 @@ function commentsRecurse( client, postid, success, failure ) {
 
 	// make an async call to mysql as ususal, the magic happens in
 	// the callbacks.
-	var sql = 'select * from project where fk_parent_id = ? order by votes desc';
-	client.query( sql, [ postid ],
+	// var sql = 'select * from project where fk_parent_id = ? order by votes desc';
+	var sql = 'select project.*, user.username from project left join user on project.fk_created_by = user.id where fk_parent_id = ? order by votes desc';
+	client.query( sql, [ postid],
 		function( err, results ) { 
 
 			// we have to check for zero results here to avoid
