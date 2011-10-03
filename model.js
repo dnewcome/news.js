@@ -72,7 +72,7 @@ exports.getProjects = function( userid, success, failure ) {
 
 exports.getComments = function( userid, postid, success, failure ) {
 	var client = getClient();
-	var sql = 'select * from project where fk_parent_id = ?';
+	var sql = 'select * from project left join user on fk_created_by = user.id where fk_parent_id = ?';
 	client.query( sql, [postid],
 		function( err, results ) { 
 			client.end();
@@ -88,7 +88,8 @@ exports.getComments = function( userid, postid, success, failure ) {
  */
 exports.getCommentsRecursive = function( postid, success, failure ) {
 	var client = getClient();
-	var sql = 'select * from project where id = ?';
+	var sql = 'select * from project left join user on fk_created_by = user.id where fk_parent_id = ?';
+	// var sql = 'select * from project where id = ?';
 	client.query( sql, [ postid ],
 		function( err, results ) { 
 		
@@ -104,7 +105,9 @@ exports.getCommentsRecursive = function( postid, success, failure ) {
 				});
 				// set a flag on the root node so the template
 				// knows to render the comment text area
-				root[0].result.root = true;
+				if( root[0].result ) {
+					root[0].result.root = true;
+				}
 				client.end(); 
 				console.log( 'final ' + JSON.stringify( root, null, 2 ) );
 				success( root ); 
@@ -145,22 +148,25 @@ function commentsRecurse( client, postid, success, failure ) {
 				success( res ); 
 			}
 			for( var i=0; i < results.length; i++ ) {
-				var resobj = { result: results[i], children: []}; 
-				res.push( resobj ); 
-				// when recursing we give our own 'success' function.
-				// the first level of recursion has the 'final' success function,
-				// which is passed in externally. The rest use what is below.
-				commentsRecurse( client, results[i]['id'], function( lsuccess ) { 	
-					count++; 	
-					// append level's child results as they are returned
-					resobj.children = resobj.children.concat( lsuccess );
+				// function needed to enclose scope of resobj
+				(function() {
+					var resobj = { result: results[i], children: []}; 
+					res.push( resobj ); 
+					// when recursing we give our own 'success' function.
+					// the first level of recursion has the 'final' success function,
+					// which is passed in externally. The rest use what is below.
+					commentsRecurse( client, results[i]['id'], function( lsuccess ) { 	
+						count++; 	
+						// append level's child results as they are returned
+						resobj.children = resobj.children.concat( lsuccess );
 
-					// check that this is the last callback before returning success
-					if( count == results.length ) { 
-						// return success
-						success( res ); 
-					} 
-				}, failure );	
+						// check that this is the last callback before returning success
+						if( count == results.length ) { 
+							// return success
+							success( res ); 
+						} 
+					}, failure );	
+				})();
 			}
 		}
 	);
