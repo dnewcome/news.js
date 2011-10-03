@@ -118,7 +118,8 @@ app.post( '/comments/:id', function( req, res ) {
 			req.session.userid,
 			req.params.id,
 			function() {
-				res.render( 'posted.jade', { action: 'edit' } );
+				// res.render( 'posted.jade', { action: 'edit' } );
+				res.redirect( req.header('Referrer'));
 			}
 		);
 	}
