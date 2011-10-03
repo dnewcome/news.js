@@ -22,13 +22,15 @@ table
 						a(href='/upvote/'+comment.result.id)
 							img(src='/grayarrow.gif')
 			td
-				p #{comment.result.description} 
+				a(href='/comments/'+comment.result.id)
+					p #{comment.result.description} 
 		tr
 			td
 			td
 			td( class='col1',style='line-height:8px' )
 				span(style='font-size:7pt')= ( comment.result.votes || 0 ) + ' points'
 				span(style='font-size:7pt') &nbsp;by #{comment.result.username}
+				a(href='/comments/'+comment.result.id, style='font-size:7pt')&nbsp;| reply
 		tr
 			td
 			td
