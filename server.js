@@ -101,6 +101,7 @@ app.get( '/projects', function( req, res ) {
 			},
 			function() {
 				req.flash('info','error showing items');
+				res.render('posted.jade' );
 			}
 		);
 	}
