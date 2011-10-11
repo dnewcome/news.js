@@ -2,7 +2,10 @@
 	ServerAdmin webmaster@localhost
 	DocumentRoot /var/www
 
+	# note that in order to make the trailing slash optional, I had
+	# to put 2 different proxy entries here, one redirecting to the other
 	ProxyPass /newsjs/ http://example.com:3000/
+	ProxyPass /newsjs http://example.com/newsjs/
 	ProxyPassReverse /newsjs/ http://example.com:3000/
 	<Proxy *>
 		Order deny,allow
