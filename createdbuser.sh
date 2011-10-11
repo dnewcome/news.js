@@ -14,6 +14,6 @@ dbuser=root
 
 echo ${dbname}
 
-mysql -u $dbuser -p -e "create user 'workingon'@'localhost' identified by 'workingon';"
-mysql -u $dbuser -p -e "grant insert, select, update, delete on workingon.* to 'workingon'@'localhost';"
+mysql -u $dbuser -p -e "create user 'newsjs'@'localhost' identified by 'newsjs';"
+mysql -u $dbuser -p -e "grant insert, select, update, delete on newsjs.* to 'newsjs'@'localhost';"
 
