@@ -15,25 +15,25 @@ table
 					td(width='10px')
 				-else
 					td(style='vertical-align:top')
-						a(href='/upvote/'+comment.result.id)
-							img(src='/grayarrow.gif')
+						a(href='#{njsroot}/upvote/'+comment.result.id)
+							img(src='#{njsroot}/grayarrow.gif')
 			td
-				a(href='/comments/'+comment.result.id)
-					p(style='margin-top:0px;margin-bottom:0px') #{comment.result.description} 
+				a(href='#{njsroot}/comments/'+comment.result.id)
+					p(style='margin-top:0px;margin-bottom:0px') #{comment.result.title} 
 		tr
 			td
 			td
 			td( class='col1',style='line-height:8px' )
 				span(style='font-size:7pt')= ( comment.result.votes || 0 ) + ' points'
 				span(style='font-size:7pt') &nbsp;by #{comment.result.username}
-				a(href='/comments/'+comment.result.id, style='font-size:7pt')&nbsp;| reply
+				a(href='#{njsroot}/comments/'+comment.result.id, style='font-size:7pt')&nbsp;| reply
 
 		- if( comments[0] && comments[0].result.root == true )
 			tr
 				td
 				td
 				td
-					form(action='/comments/#{postid}',method='post')
+					form(action='#{njsroot}/comments/#{postid}',method='post')
 						textarea(name='comment', rows='6', cols='60', style='margin-top:20px')
 						br
 						input(type='submit',value='Comment', style='margin-top:20px')
