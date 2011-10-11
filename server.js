@@ -17,7 +17,8 @@ app.helpers(config);
 
 /** Some global config **/
 // allow anonymous viewing
-var anonaccess = true;
+// var anonaccess = true;
+// var disableDelete = true;
 
 /**
 * Login 
@@ -85,7 +86,13 @@ app.get( '/', function( req, res ) {
     res.redirect('/projects');
 });
 app.get( '/projects', function( req, res ) {
-	if( anonaccess == false ) {
+	res.redirect('/posts');
+});
+
+app.get( '/posts', doPost );
+
+function doPost( req, res ) {
+	if( config.anonaccess == false ) {
 		if( req.session.authenticated == false 
 		|| req.session.authenticated == undefined ) {
 			console.log( 'not authenticated - redirecting' );
@@ -108,7 +115,7 @@ app.get( '/projects', function( req, res ) {
 			}
 		);
 	}
-});
+}
 
 app.post('/comments/:id', function(req, res, next ){
 	console.log('precondition route for posting comment');
@@ -129,7 +136,7 @@ app.post( '/comments/:id', function( req, res ) {
 	}
 });
 app.get( '/comments/:id', function( req, res ) {
-	if( anonaccess == false ) {
+	if( config.anonaccess == false ) {
 		if( req.session.authenticated == false 
 		|| req.session.authenticated == undefined ) {
 			console.log( 'not authenticated - redirecting' );
@@ -176,7 +183,7 @@ app.get('/newproject', function(req, res, next ){
 	loginCheck( req, res, next );
 });
 app.get('/newproject', function(req, res){
-	res.render('newproject.jade');
+	res.render('newproject.jade', { username: req.session.username });
 });
 
 app.post('/projects', function(req, res){
@@ -231,6 +238,10 @@ app.get('/confirmdelete/:id', function(req, res){
     res.render('confirm.jade', { id: req.params.id });
 });
 app.get('/deleteproject/:id', function(req, res){
+	if( config.disableDelete == true ) { 
+		res.end(); 
+		return;
+	}
 	console.log( req.body );
 	var client = getClient();
 	client.query(
@@ -248,7 +259,8 @@ app.get('/deleteproject/:id', function(req, res){
 app.get('/upvote/:id', function(req, res){
 	if( loggedin(req) ) {
 		model.upvote( req.params.id, req.session.userid, function() {
-			res.redirect('/projects');
+			// res.redirect('/projects');
+			res.redirect( req.header('Referrer'));
 		});
 	}
 	else {
