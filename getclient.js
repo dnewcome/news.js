@@ -1,4 +1,4 @@
-
+var config = require('./config').config;
 function getClient() {
 	var Client = require('mysql').Client,
 	client = new Client()
@@ -7,7 +7,8 @@ function getClient() {
 	client.password = 'newsjs';
 
 	// client.connect();
-	client.useDatabase( 'newsjs', function(){} );
+	// client.useDatabase( 'newsjsdev', function(){} );
+	client.useDatabase( config.dbname, function(){} );
 	return client;
 }
 

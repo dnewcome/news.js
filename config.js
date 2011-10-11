@@ -1,10 +1,11 @@
 
 var config = {
-	njsroot: '/ah',
+	njsroot: '',
 	title: 'Audio Hackers',
 	logo: 'Ah',
 	anonaccess: true,
-	disableDelete: true
+	disableDelete: true,
+	dbname:'newsjs' 
 }
 
 exports.config = config;
