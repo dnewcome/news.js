@@ -277,5 +277,12 @@ function loggedin( req ) {
 	return retval;
 }
 
+/**
+* display the faq
+*/
+app.get('/faq', function( req, res ) {
+	res.render( 'faq.jade' );
+});
+
 app.listen(3000);
 
