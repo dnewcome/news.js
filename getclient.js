@@ -3,11 +3,11 @@ function getClient() {
 	var Client = require('mysql').Client,
 	client = new Client()
 
-	client.user = 'root';
-	client.password = 'root';
+	client.user = 'newsjs';
+	client.password = 'newsjs';
 
 	// client.connect();
-	client.useDatabase( 'workingon', function(){} );
+	client.useDatabase( 'newsjs', function(){} );
 	return client;
 }
 
