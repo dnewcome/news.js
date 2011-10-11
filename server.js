@@ -1,4 +1,5 @@
 var model = require('./model');
+var config = require('./config').config;
 
 var express = require('express');
 var http = require('http');
@@ -12,7 +13,7 @@ app.use(express.session({ secret: "batman" }));
 
 app.use(express.static( __dirname + '/static' ));
 
-app.helpers({njsroot:''});
+app.helpers(config);
 
 /** Some global config **/
 // allow anonymous viewing
