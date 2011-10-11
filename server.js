@@ -12,6 +12,8 @@ app.use(express.session({ secret: "batman" }));
 
 app.use(express.static( __dirname + '/static' ));
 
+app.helpers({njsroot:''});
+
 /** Some global config **/
 // allow anonymous viewing
 var anonaccess = true;
