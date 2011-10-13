@@ -1,4 +1,5 @@
 var model = require('./model');
+var crypto = require('crypto');
 var config = require('./config').config;
 
 var express = require('express');
@@ -27,10 +28,10 @@ app.get('/login', function(req, res){
 	res.render('login.jade', {info: req.flash('info')} );
 });
 app.post('/login', function(req, res){
-	console.log( req.body );
+	var pwhash = doShaHash( req.body.password );	
 	model.login( 
 		req.body.username, 
-		req.body.password,
+		pwhash,
 		function( data ) {
 			req.session.authenticated = true;	
 			req.session.username = req.body.username;	
@@ -44,10 +45,18 @@ app.post('/login', function(req, res){
 		}
 	);
 });
+
+function doShaHash( key ) {
+    var sha1 = crypto.createHmac( 'sha1', 'batman' );
+    sha1.update( key );
+    return sha1.digest( 'hex' );
+}
+
 app.post('/signup', function(req, res){
+	var pwhash = doShaHash( req.body.newpassword );	
 	model.signup( 
 		req.body.newusername, 
-		req.body.newpassword,
+		pwhash,
 		function( data ) {
 			req.session.authenticated = true;	
 			req.session.username = req.body.newusername;	
