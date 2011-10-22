@@ -305,5 +305,5 @@ app.get('/faq', function( req, res ) {
 	res.render( 'faq.jade' );
 });
 
-app.listen(3000);
+app.listen(config.port);
 
