@@ -16,11 +16,6 @@ app.use(express.static( __dirname + '/static' ));
 
 app.helpers(config);
 
-/** Some global config **/
-// allow anonymous viewing
-// var anonaccess = true;
-// var disableDelete = true;
-
 /**
 * Login 
 */
