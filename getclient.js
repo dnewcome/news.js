@@ -6,8 +6,6 @@ function getClient() {
 	client.user = config.dbusername;
 	client.password = config.dbpassword;
 
-	// client.connect();
-	// client.useDatabase( 'newsjsdev', function(){} );
 	client.useDatabase( config.dbname, function(){} );
 	return client;
 }
