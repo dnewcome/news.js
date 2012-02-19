@@ -2,3 +2,27 @@ Rename things from 'project' to 'post'
 or maybe use 'item' like hacker news does.
 
 
+news app for node.js
+
+# Installing:
+
+install node
+install npm
+npm install
+
+# package dependencies:
+
+express
+node-mysql
+jade
+
+TODO:
+pagination
+x redo icon
+x user creation
+x comment threads
+rename things from 'project' which was from an old project
+- maybe redo things in mustache .. 
+make things more modular. We ahve to check that user is logged 
+in a lot, should try to call taht using 'next() or something.
+Look at data model. Maybe things could be simpler.

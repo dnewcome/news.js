@@ -3,7 +3,9 @@ style
 form(method='post', action='projects')
 	label(for='title') Title:
 	input(type='text', name='title', size='100')
-	label(for='body') Url:
+	label(for='description') Url:
 	input(type='text', name='description', size='100')
+	label(for='body') Body:
+	textarea(type='text', name='body', rows='30', cols='80')
 	br
 	input(type='submit') Submit
