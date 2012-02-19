@@ -1,0 +1,25 @@
+table
+	- var i = 0;
+	- each post in posts 
+		tr
+			- if( post.fk_created_by == userid )
+				td(class='col1',style='color:#ff6600')= '*'
+				td
+			- else
+				td(class='col1')= ++i + '.'
+				-if( post.voted != null )
+					td(width='10px')
+				-else
+					td
+						a(href='upvote/'+post.id)
+							img(src='grayarrow.gif')
+			td
+				a(href='#{post.description}') #{post.title}
+		tr
+			td
+			td
+			td( class='col1',style='line-height:8px' )
+				span(style='font-size:7pt')= ( post.votes || 0 ) + ' points'
+				span(style='font-size:7pt') &nbsp;by #{post.username}
+				a(href='comments/#{post.id}', style='font-size:7pt') &nbsp;comments 
+

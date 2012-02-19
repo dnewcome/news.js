@@ -39,28 +39,21 @@ exports.signup = function( username, password, success, failure ) {
 	);
 };
 
-exports.getProjects = function( userid, success, failure ) {
+exports.getPosts = function( userid, success, failure ) {
 	var client = getClient();
-	// var sql = 'select * from project order by votes desc'; 
 	var sql = 
-		'select * from project where fk_parent_id is null ' +
-		'left outer join ( ' + 
-			'select * from vote where fk_user_id = ? ' +
-		') f on f.fk_project_id = project.id order by votes desc';
-
-	var sql = 
-		'select project.id, project.title, project.description, project.body, project.votes, ' +
+		'select post.id, post.title, post.description, post.body, post.votes, ' +
 			'f.fk_user_id as voted, fk_created_by, user.username ' +
-		'from project ' + 
+		'from post ' + 
 		'left outer join ( ' + 
 			'select * from vote where fk_user_id = ? ' +
-		') f on f.fk_project_id = project.id ' + 
+		') f on f.fk_post_id = post.id ' + 
 		'left join user on user.id = fk_created_by ' +
 		// trying to get comment counts
-		// 'left join (select count(*) as count, max(fk_parent_id) as fk_parent_id from project where fk_parent_id is not null group by fk_parent_id ) x on x.fk_parent_id = p.fk_parent_id' +
+		// 'left join (select count(*) as count, max(fk_parent_id) as fk_parent_id from post where fk_parent_id is not null group by fk_parent_id ) x on x.fk_parent_id = p.fk_parent_id' +
 		'where fk_parent_id is null ' +
 		'order by votes desc';
-
+	console.log(sql);
 
 	client.query( sql, [userid],
 		function( err, results ) { 
@@ -73,7 +66,7 @@ exports.getProjects = function( userid, success, failure ) {
 /*
 exports.getComments = function( userid, postid, success, failure ) {
 	var client = getClient();
-	var sql = 'select * from project left join user on fk_created_by = user.id where fk_parent_id = ? or project.id = ?';
+	var sql = 'select * from post left join user on fk_created_by = user.id where fk_parent_id = ? or post.id = ?';
 	client.query( sql, [postid, postid],
 		function( err, results ) { 
 			client.end();
@@ -90,8 +83,8 @@ exports.getComments = function( userid, postid, success, failure ) {
  */
 exports.getCommentsRecursive = function( postid, success, failure ) {
 	var client = getClient();
-	var sql = 'select project.*, user.username from project left join user on fk_created_by = user.id where project.id = ?';
-	// var sql = 'select * from project where id = ?';
+	var sql = 'select post.*, user.username from post left join user on fk_created_by = user.id where post.id = ?';
+	// var sql = 'select * from post where id = ?';
 	client.query( sql, [ postid],
 		function( err, results ) { 
 		
@@ -137,8 +130,8 @@ function commentsRecurse( client, postid, success, failure ) {
 
 	// make an async call to mysql as ususal, the magic happens in
 	// the callbacks.
-	// var sql = 'select * from project where fk_parent_id = ? order by votes desc';
-	var sql = 'select project.*, user.username from project left join user on project.fk_created_by = user.id where fk_parent_id = ? order by votes desc';
+	// var sql = 'select * from post where fk_parent_id = ? order by votes desc';
+	var sql = 'select post.*, user.username from post left join user on post.fk_created_by = user.id where fk_parent_id = ? order by votes desc';
 	client.query( sql, [ postid],
 		function( err, results ) { 
 
@@ -177,7 +170,7 @@ function commentsRecurse( client, postid, success, failure ) {
 
 exports.newComment = function( body, userid, postid, success, failure ) {
 	var client = getClient();
-	var sql = 'insert into project ' + 
+	var sql = 'insert into post' + 
 		'set description = ?, votes = 1, fk_created_by = ?, fk_parent_id = ?';
 	client.query( sql, [ body, userid, postid ], 
 		function( err, results ) { 
@@ -186,9 +179,9 @@ exports.newComment = function( body, userid, postid, success, failure ) {
 	});
 };
 
-exports.newProject = function( title, desc, body, userid, success, failure ) {
+exports.newPost = function( title, desc, body, userid, success, failure ) {
 	var client = getClient();
-	var sql = 'insert into project ' + 
+	var sql = 'insert into post' + 
 		'set title = ?, description = ?, votes = 1, fk_created_by = ?, body = ?';
 	client.query( sql, [ title, desc, userid, body ], 
 		function( err, results ) { 
@@ -212,10 +205,10 @@ function vote( id, userid, dir, cb ) {
 	console.log('callback cb() is ' + cb);
 	var client = getClient();
 	var sql = 
-		'update project set votes = votes ' + dir + ' where id = ?'; 
+		'update post set votes = votes ' + dir + ' where id = ?'; 
 	sql += 
 		' and not exists ( ' + 
-			'select * from vote where fk_project_id = ? and fk_user_id = ? ' +
+			'select * from vote where fk_post_id= ? and fk_user_id = ? ' +
 		')';
 	client.query(
 		sql, [id,id,userid], 
@@ -224,7 +217,7 @@ function vote( id, userid, dir, cb ) {
 			// only insert vote row if we updated earlier
 			if( results.affectedRows != 0 ) {
 				client.query(
-					'insert into vote ( fk_user_id, fk_project_id ) values (?,?) ',
+					'insert into vote ( fk_user_id, fk_post_id ) values (?,?) ',
 					[userid,id], 
 					function( err, results ) { 
 						client.end();
