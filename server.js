@@ -6,15 +6,20 @@ var express = require('express');
 var http = require('http');
 var getClient = require('./getclient.js').getClient;
 
-var app = express.createServer();
-app.use(express.bodyParser());
+var app = createApp();
 
-app.use(express.cookieParser());
-app.use(express.session({ secret: "batman" }));
+function createApp() {
+	var app = express.createServer();
+	app.use(express.bodyParser());
 
-app.use(express.static( __dirname + '/static' ));
+	app.use(express.cookieParser());
+	app.use(express.session({ secret: "batman" }));
 
-app.helpers(config);
+	app.use(express.static( __dirname + '/static' ));
+
+	app.helpers(config);
+	return app;
+}
 
 /**
 * Login 
