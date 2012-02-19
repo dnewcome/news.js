@@ -1,9 +1,0 @@
-style
-	label, input { display:block; }
-form(method='post', action='/editproject/' + project.id )
-	label(for='title') Title:
-	input(type='text', name='title', size='100', value= project.title )
-	label(for='description') Description:
-	textarea(name='description', cols='100',rows='20')= project.description
-	input(type='submit')
-	a(href='/projects') Cancel
