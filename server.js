@@ -201,6 +201,7 @@ app.post('/projects', function(req, res){
 		model.newProject( 
 			req.body.title, 
 			req.body.description, 
+			req.body.body,
 			req.session.userid,
 			function() {
 				res.render( 'posted.jade', { action: 'edit' } );

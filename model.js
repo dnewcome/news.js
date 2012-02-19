@@ -49,7 +49,7 @@ exports.getProjects = function( userid, success, failure ) {
 		') f on f.fk_project_id = project.id order by votes desc';
 
 	var sql = 
-		'select project.id, project.title, project.description, project.votes, ' +
+		'select project.id, project.title, project.description, project.body, project.votes, ' +
 			'f.fk_user_id as voted, fk_created_by, user.username ' +
 		'from project ' + 
 		'left outer join ( ' + 
@@ -186,11 +186,11 @@ exports.newComment = function( body, userid, postid, success, failure ) {
 	});
 };
 
-exports.newProject = function( title, desc, userid, success, failure ) {
+exports.newProject = function( title, desc, body, userid, success, failure ) {
 	var client = getClient();
 	var sql = 'insert into project ' + 
-		'set title = ?, description = ?, votes = 1, fk_created_by = ?';
-	client.query( sql, [ title, desc, userid ], 
+		'set title = ?, description = ?, votes = 1, fk_created_by = ?, body = ?';
+	client.query( sql, [ title, desc, userid, body ], 
 		function( err, results ) { 
 			client.end();
 			success();	

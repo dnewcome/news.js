@@ -5,7 +5,10 @@ var config = {
 	logo: 'Ah',
 	anonaccess: true,
 	disableDelete: true,
-	dbname:'newsjs' 
+	dbname:'newsjs',
+	dbusername:'root',
+	dbpassword:'root',
+	port: 3450 
 }
 
 exports.config = config;

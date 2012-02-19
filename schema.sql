@@ -2,6 +2,7 @@ create table project (
 	id integer not null auto_increment primary key,
 	title varchar(1000), 
 	description longtext character set utf8,
+	body varchar(20000), 
 	votes integer,
 	create_dt datetime not null,
 	fk_created_by integer not null,
