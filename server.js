@@ -1,4 +1,5 @@
-var model = require('./model');
+var model = require('./vote-model');
+var model = require('./post-model');
 
 var loginCheck = require('./route-common.js').loginCheck;
 var loggedin = require('./route-common.js').loggedin;
