@@ -94,7 +94,7 @@ function commentsRecurse( client, postid, success, failure ) {
 
 exports.newComment = function( body, userid, postid, success, failure ) {
 	var client = getClient();
-	var sql = 'insert into post' + 
+	var sql = 'insert into post ' + 
 		'set description = ?, votes = 1, fk_created_by = ?, fk_parent_id = ?';
 	client.query( sql, [ body, userid, postid ], 
 		function( err, results ) { 

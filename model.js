@@ -26,7 +26,7 @@ exports.getPosts = function( userid, success, failure ) {
 
 exports.newPost = function( title, desc, body, userid, success, failure ) {
 	var client = getClient();
-	var sql = 'insert into post' + 
+	var sql = 'insert into post ' + 
 		'set title = ?, description = ?, votes = 1, fk_created_by = ?, body = ?';
 	client.query( sql, [ title, desc, userid, body ], 
 		function( err, results ) { 

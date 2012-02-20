@@ -1,6 +1,8 @@
 var model = require('./comment-model');
 var config = require('./config').config;
 
+var loginCheck = require('./route-common.js').loginCheck;
+
 /**
 * comments 
 */

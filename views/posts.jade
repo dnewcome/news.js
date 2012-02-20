@@ -14,7 +14,7 @@ table
 						a(href='upvote/'+post.id)
 							img(src='grayarrow.gif')
 			td
-				-if( post.body != null )
+				-if( post.body == null )
 					a(href='#{post.description}') #{post.title}
 				-else
 					a(href='#{njsroot}/comments/#{post.id}') #{post.title}

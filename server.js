@@ -1,5 +1,8 @@
 var model = require('./model');
 
+var loginCheck = require('./route-common.js').loginCheck;
+var loggedin = require('./route-common.js').loggedin;
+
 var config = require('./config').config;
 var express = require('express');
 var http = require('http');
@@ -166,14 +169,6 @@ app.get('/downvote/:id', function(req, res){
 	}
 });
 
-function loggedin( req ) {
-	var retval = false;
-	if( req.session.userid != null ) {
-		retval = true;
-	}
-	console.log('loggedin(): ' + retval );
-	return retval;
-}
 
 /**
 * display the faq
@@ -209,16 +204,3 @@ function createApp() {
 }
 
 
-/**
- * Handles redirection to the login page for actions
- * that require login.
- */
-function loginCheck( req, res, next ) {
-	console.log( 'checking login' );
-	if( loggedin( req ) ) {
-		next();	
-	}
-	else {
-		res.redirect('/login');
-	}
-};
