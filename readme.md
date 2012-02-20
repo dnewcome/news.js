@@ -4,21 +4,18 @@ News.js aims to be a functional replacement for the news.arc server that powers 
 
 # Status
 
-The current state of the code is very rough. I'm releasing the code as-is with the hopes of refining it further as 
-my time permits, but it is not a current priority for me. The code was based on a small private tool that I 
-created to track and prioritize my projects. I added the ability to create multiple user accounts and copied
-the news.ycombinator layout (tables and all).
+I'm using News.js on audiohackers.org to support my meetup group. The code evolves when I need
+something new, but is infrequently updated.
 
 # Limitations
 
-Scoring of articles does not take time into account. Articles are ranked strictly on votes. Threading of 
-comments is barely done, and the page flow when adding new comments is pretty broken.
+Scoring of articles does not take time into account. Articles are ranked strictly on votes.
+there is no paging or separation of new articles vs ranked articles.
 
 # Further Work
 
-I'm hoping that there will be some interest in having a Reddit/HN-style news app for node.js 
-is interesting to others so I'm releasing what I have so far. If there is more interest and
-if I have the time I'll work on it more and I'd welcome suggestions and contributions.
+I'm hoping that there will be some interest in having a Reddit/HN-style news app for node.js.
+I welcome suggestions and contributions.
 
 # License
 
