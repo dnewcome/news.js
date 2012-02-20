@@ -1,56 +1,14 @@
 var model = require('./model');
-var crypto = require('crypto');
+// var crypto = require('crypto');
 var config = require('./config').config;
-
 var express = require('express');
 var http = require('http');
 var getClient = require('./getclient.js').getClient;
 
-var app = createApp();
+app = createApp();
 
-function createApp() {
-	var app = express.createServer();
-	app.use(express.bodyParser());
+require( './account.js' );
 
-	app.use(express.cookieParser());
-	app.use(express.session({ secret: "batman" }));
-
-	app.use(express.static( __dirname + '/static' ));
-
-	app.helpers(config);
-	return app;
-}
-
-/**
-* Login 
-*/
-app.get('/login', function(req, res){
-	res.render('login.jade', {info: req.flash('info')} );
-});
-app.post('/login', function(req, res){
-	var pwhash = doShaHash( req.body.password );	
-	model.login( 
-		req.body.username, 
-		pwhash,
-		function( data ) {
-			req.session.authenticated = true;	
-			req.session.username = req.body.username;	
-			req.session.userid = data.userid;	
-			req.flash('info','logged in');
-			res.redirect('/posts');
-		},
-		function() {
-			req.flash('info','login failed');
-			res.redirect('/login');
-		}
-	);
-});
-
-function doShaHash( key ) {
-    var sha1 = crypto.createHmac( 'sha1', 'batman' );
-    sha1.update( key );
-    return sha1.digest( 'hex' );
-}
 
 app.post('/signup', function(req, res){
 	var pwhash = doShaHash( req.body.newpassword );	
@@ -124,6 +82,9 @@ function doPost( req, res ) {
 	}
 }
 
+/**
+* comments 
+*/
 app.post('/comments/:id', function(req, res, next ){
 	console.log('precondition route for posting comment');
 	loginCheck( req, res, next );
@@ -168,19 +129,6 @@ app.get( '/comments/:id', function( req, res ) {
 	}
 });
 
-/**
- * Handles redirection to the login page for actions
- * that require login.
- */
-function loginCheck( req, res, next ) {
-	console.log( 'checking login' );
-	if( loggedin( req ) ) {
-		next();	
-	}
-	else {
-		res.redirect('/login');
-	}
-};
 
 /**
 * New post 
@@ -306,3 +254,41 @@ app.get('/faq', function( req, res ) {
 
 app.listen(config.port);
 
+/**
+ * Utility function to set the Express app up 
+ * with the proper middleware.
+ */
+function createApp() {
+	var app = express.createServer();
+
+	// we need body parser for form post data, etc. 
+	app.use(express.bodyParser());
+
+	// cookie parser and session middleware for login
+	app.use(express.cookieParser());
+	app.use(express.session({ secret: "batman" }));
+
+	// serve up static/ folder as static content
+	app.use(express.static( __dirname + '/static' ));
+
+	// give templates access to root folder specified 
+	// in config via the Express 'helpers' mechanism.
+	app.helpers(config);
+
+	return app;
+}
+
+
+/**
+ * Handles redirection to the login page for actions
+ * that require login.
+ */
+function loginCheck( req, res, next ) {
+	console.log( 'checking login' );
+	if( loggedin( req ) ) {
+		next();	
+	}
+	else {
+		res.redirect('/login');
+	}
+};
