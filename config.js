@@ -1,8 +1,8 @@
 
 var config = {
 	njsroot: '',
-	title: 'Audio Hackers',
-	logo: 'Ah',
+	title: 'News.js',
+	logo: 'JS',
 	anonaccess: true,
 	disableDelete: true,
 	dbname:'newsjs',
