@@ -26,6 +26,34 @@ app.post('/login', function(req, res){
 	);
 });
 
+app.post('/signup', function(req, res){
+	var pwhash = doShaHash( req.body.newpassword );	
+	model.signup( 
+		req.body.newusername, 
+		pwhash,
+		function( data ) {
+			req.session.authenticated = true;	
+			req.session.username = req.body.newusername;	
+			req.session.userid = data.userid;	
+			console.log( req.session.userid );
+			req.flash('info','logged in');
+			res.redirect('/posts');
+		},
+		function() {
+			req.flash('info','signup failed - duplicate name');
+			res.redirect('/login');
+		}
+	);
+});
+
+app.get( '/logout', function( req, res ) {
+	req.session.authenticated = false;	
+	req.session.username = '';	
+	req.session.userid = null;	
+	req.flash('info','logged out');
+	res.redirect('/login');
+});
+
 /**
  * Utility function for creating a sha1 hmac of the password
  * key is fixed.

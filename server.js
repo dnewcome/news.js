@@ -1,5 +1,5 @@
 var model = require('./model');
-// var crypto = require('crypto');
+
 var config = require('./config').config;
 var express = require('express');
 var http = require('http');
@@ -7,35 +7,11 @@ var getClient = require('./getclient.js').getClient;
 
 app = createApp();
 
+// pull in more routings
 require( './account.js' );
+require( './comment.js' );
 
 
-app.post('/signup', function(req, res){
-	var pwhash = doShaHash( req.body.newpassword );	
-	model.signup( 
-		req.body.newusername, 
-		pwhash,
-		function( data ) {
-			req.session.authenticated = true;	
-			req.session.username = req.body.newusername;	
-			req.session.userid = data.userid;	
-			console.log( req.session.userid );
-			req.flash('info','logged in');
-			res.redirect('/posts');
-		},
-		function() {
-			req.flash('info','signup failed - duplicate name');
-			res.redirect('/login');
-		}
-	);
-});
-app.get( '/logout', function( req, res ) {
-	req.session.authenticated = false;	
-	req.session.username = '';	
-	req.session.userid = null;	
-	req.flash('info','logged out');
-	res.redirect('/login');
-});
 
 /**
  * We can use a route like this to look at all top 
@@ -82,52 +58,6 @@ function doPost( req, res ) {
 	}
 }
 
-/**
-* comments 
-*/
-app.post('/comments/:id', function(req, res, next ){
-	console.log('precondition route for posting comment');
-	loginCheck( req, res, next );
-});
-app.post( '/comments/:id', function( req, res ) {
-	if( loggedin( req ) ) {
-		console.log( req.body );
-		model.newComment( 
-			req.body.comment, 
-			req.session.userid,
-			req.params.id,
-			function() {
-				// res.render( 'posted.jade', { action: 'edit' } );
-				res.redirect( req.header('Referrer'));
-			}
-		);
-	}
-});
-app.get( '/comments/:id', function( req, res ) {
-	if( config.anonaccess == false ) {
-		if( req.session.authenticated == false 
-		|| req.session.authenticated == undefined ) {
-			console.log( 'not authenticated - redirecting' );
-			res.redirect( '/login' );
-		}
-	}
-	// note that else is necessary since res.redirect() is not blocking.
-	else {
-		model.getCommentsRecursive( req.params.id,
-			function( data ) {
-				res.render('comments.jade', { 
-					comments: data, 
-					username: req.session.username,
-					userid: req.session.userid,
-					postid: req.params.id
-				});
-			},
-			function() {
-				req.flash('info','error showing items');
-			}
-		);
-	}
-});
 
 
 /**

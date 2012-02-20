@@ -1,4 +1,5 @@
-
+refactor things so that all user account stuff is 
+under some folder so that we can pull it in really fast
 
 news app for node.js
 
