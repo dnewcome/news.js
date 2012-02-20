@@ -13,4 +13,5 @@ echo ${dbname}
 mysql -u $dbuser -p -e "drop database $dbname;"
 mysql -u $dbuser -p -e "create database $dbname default character set utf8;"
 
+mysql -u $dbuser -p $dbname < user.sql
 mysql -u $dbuser -p $dbname < schema.sql

@@ -10,14 +10,6 @@ create table post (
 	foreign key (fk_created_by) references user(id)
 );
 
-create table user (
-	id integer not null auto_increment primary key, 
-	username varchar(25), 
-	-- pw hashed using sha1, needs 40 hex chars
-	password varchar(40),
-	unique( username )
-);
-
 create table vote (
 	id integer not null auto_increment primary key, 
 	fk_user_id int not null, 

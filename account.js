@@ -1,4 +1,4 @@
-var model = require('./model');
+var model = require('./account-model');
 var crypto = require('crypto');
 
 /**
