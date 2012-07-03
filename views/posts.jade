@@ -1,28 +1,33 @@
-table
+div( id='posts' )
 	- var i = 0;
 	- each post in posts 
-		tr
-			- if( post.fk_created_by == userid )
-				td(class='col1',style='color:#ff6600')= '*'
-				td
-			- else
-				td(class='col1')= ++i + '.'
-				-if( post.voted != null )
-					td(width='10px')
-				-else
-					td
-						a(href='upvote/'+post.id)
-							img(src='grayarrow.gif')
-			td
-				-if( post.body == null || post.body == "" )
-					a(href='#{post.description}') #{post.title}
-				-else
-					a(href='#{njsroot}/comments/#{post.id}') #{post.title}
-		tr
-			td
-			td
-			td( class='col1',style='line-height:8px' )
-				span(style='font-size:7pt')= ( post.votes || 0 ) + ' points'
-				span(style='font-size:7pt') &nbsp;by #{post.username}
-				a(href='#{njsroot}/comments/#{post.id}', style='font-size:7pt') &nbsp;comments 
+
+		div( class='post' )
+
+			// first line
+			div	
+				// show a vote link or the number 
+				- if( post.fk_created_by == userid )
+					span(class='asterisk')= '*'
+				- else
+					span(class='ordinal')= ++i + '.'
+					-if( post.voted != null )
+						// this is a placeholder
+						span(class='vote-placeholder')
+					-else
+						span	
+							a(href='{njsroot}/upvote/'+post.id)
+								img(src='#{njsroot}/grayarrow.gif')
+				span	
+					-if( post.body == null || post.body == "" )
+						a(href='#{post.description}') #{post.title}
+					-else
+						a(href='#{njsroot}/comments/#{post.id}') #{post.title}
+
+			// second line
+			div	
+				span( class='',style='line-height:8px' )
+					span(style='font-size:7pt')= ( post.votes || 0 ) + ' points'
+					span(style='font-size:7pt') &nbsp;by #{post.username}
+					a(href='#{njsroot}/comments/#{post.id}', style='font-size:7pt') &nbsp;comments 
 

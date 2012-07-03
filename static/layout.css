@@ -28,3 +28,9 @@ a:visited { color:#828282 }
 	white-space: pre-line;
 	overflow-x: auto;
 }
+
+.post {
+	padding: 10px;
+	margin: 3px;
+	background-color: rgba(100,100,100,0.3);
+}
