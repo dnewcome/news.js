@@ -1,4 +1,4 @@
-var model = require('./vote-model');
+var votemodel = require('./vote-model');
 var model = require('./post-model');
 
 var loginCheck = require('./route-common.js').loginCheck;
@@ -148,7 +148,7 @@ app.get('/deletepost/:id', function(req, res){
 */
 app.get('/upvote/:id', function(req, res){
 	if( loggedin(req) ) {
-		model.upvote( req.params.id, req.session.userid, function() {
+		votemodel.upvote( req.params.id, req.session.userid, function() {
 			// res.redirect('/');
 			res.redirect( req.header('Referrer'));
 		});
@@ -160,7 +160,7 @@ app.get('/upvote/:id', function(req, res){
 });
 app.get('/downvote/:id', function(req, res){
 	if( loggedin(req) ) {
-		model.downvote( req.params.id, req.session.userid, function() {
+		votemodel.downvote( req.params.id, req.session.userid, function() {
 			res.redirect('/posts');
 		});
 	}
